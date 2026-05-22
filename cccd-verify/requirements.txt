@@ -1,0 +1,25 @@
+fastapi==0.111.0
+uvicorn[standard]==0.29.0
+python-multipart==0.0.9
+
+# OCR
+google-cloud-vision==3.7.2
+
+# Image processing
+opencv-python-headless==4.10.0.84
+Pillow==10.3.0
+numpy==1.26.4
+
+# Validation
+pydantic==2.7.1
+
+# HTTP client
+httpx==0.27.0
+
+# Google auth
+google-auth==2.29.0
+google-api-core==2.19.0
+grpcio==1.64.0
+
+# IMPORTANT:
+protobuf==4.25.3
