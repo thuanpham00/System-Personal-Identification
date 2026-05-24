@@ -116,7 +116,7 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
   `;
 
   const handleSendMail = async () => {
-    const res = await fetch("http://localhost:8000/send-verify-email", {
+    const res = await fetch("https://system-personal-identification.onrender.com/send-verify-email", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

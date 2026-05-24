@@ -110,7 +110,7 @@ export default function PersonalIdentification() {
     const cccdUrl = cccdFile.url;
     const imageOrder = fileList.map((f) => f.url);
 
-    const res = await fetch("http://localhost:8000/verify-two", {
+    const res = await fetch("https://system-personal-identification.onrender.com/verify-two", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
