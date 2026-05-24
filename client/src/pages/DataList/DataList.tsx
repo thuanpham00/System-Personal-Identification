@@ -19,8 +19,9 @@ interface DataRecord {
   created_at: string;
   status: string;
   status_identification: string;
-  reminder_date_1: string;
-  reminder_date_2: string;
+  reminder_3day: string;
+  reminder_7day: string;
+  reminder_5m: string;
 }
 
 export default function DataList() {
@@ -89,15 +90,21 @@ export default function DataList() {
       render: (val: string) => new Date(val).toLocaleString("vi-VN"),
     },
     {
+      title: "Ngày nhắc 5 phút (nháp)",
+      dataIndex: "reminder_5m",
+      key: "reminder_5m",
+      render: (val: string) => new Date(val).toLocaleString("vi-VN"),
+    },
+    {
       title: "Ngày nhắc lần 1",
-      dataIndex: "reminder_date_1",
-      key: "reminder_date_1",
+      dataIndex: "reminder_3day",
+      key: "reminder_3day",
       render: (val: string) => new Date(val).toLocaleString("vi-VN"),
     },
     {
       title: "Ngày nhắc lần 2",
-      dataIndex: "reminder_date_2",
-      key: "reminder_date_2",
+      dataIndex: "reminder_7day",
+      key: "reminder_7day",
       render: (val: string) => new Date(val).toLocaleString("vi-VN"),
     },
     {

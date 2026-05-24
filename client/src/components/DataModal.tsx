@@ -89,6 +89,21 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
     const now = new Date();
     const rows = [];
 
+    await supabase
+      .from("data")
+      .update({
+        reminder_5m: listReminder.includes("5m")
+          ? new Date(now.getTime() + 5 * 60 * 1000).toISOString()
+          : null,
+        reminder_3day: listReminder.includes("3d")
+          ? new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000).toISOString()
+          : null,
+        reminder_7day: listReminder.includes("7d")
+          ? new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString()
+          : null,
+      })
+      .eq("id", form.getFieldValue("id"));
+
     if (listReminder.includes("5m")) {
       const remindAt = new Date(now);
       remindAt.setMinutes(remindAt.getMinutes() + 5);
