@@ -11,10 +11,13 @@ import httpx
 import tempfile
 import os
 
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from typing import List ,Optional, Dict
 from app.ocr_service import OCRService
 from app.log_config import get_logger
+import resend
+from dotenv import load_dotenv
+load_dotenv()
 
 logger = get_logger(__name__)
 
@@ -66,6 +69,40 @@ async def health():
     return {
         "status": "ok"
     }
+
+VERIFY_EMAIL_TEMPLATE = """
+<html>
+  <body>
+    <h1>{{title}}</h1>
+    <p>{{content}}</p>
+    <a href="{{link}}">{{titleLink}}</a>
+  </body>
+</html>
+"""
+
+class SendVerifyEmailRequest(BaseModel):  # ← phải định nghĩa TRƯỚC khi dùng
+    to_address: EmailStr
+
+resend.api_key = os.getenv("RESEND_API_KEY")
+CLIENT_URL = os.getenv("CLIENT_URL")
+RESEND_EMAIL_FROM = os.getenv("RESEND_EMAIL_FROM")
+    
+@app.post("/send-verify-email")
+async def send_verify_email(body: SendVerifyEmailRequest):
+    html = VERIFY_EMAIL_TEMPLATE \
+        .replace("{{title}}", "Vui lòng xác minh email của bạn") \
+        .replace("{{content}}", "Nhấp vào nút bên dưới để xác minh email của bạn") \
+
+    try:
+        result = resend.Emails.send({
+            "from": RESEND_EMAIL_FROM,
+            "to": body.to_address,
+            "subject": "Verify your email",
+            "html": html
+        })
+        return {"status": "ok", "id": result["id"]}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/verify-two")
 async def verify_two_images(body: VerifyTwoRequest):

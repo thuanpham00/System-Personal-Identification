@@ -115,6 +115,20 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
     </div>
   `;
 
+  const handleSendMail = async () => {
+    const res = await fetch("http://localhost:8000/send-verify-email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        to_address: "phamminhthuan912@gmail.com",
+      }),
+    });
+
+    if (res.ok) {
+      console.log("Email sent successfully");
+    }
+  };
+
   return (
     <Modal
       onCancel={() => {
@@ -126,6 +140,7 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
       width={700}
       confirmLoading={loading}
       onOk={submitForm}
+      footer={null}
     >
       <Form layout="vertical" form={form}>
         <Row gutter={16}>
@@ -203,6 +218,7 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
               // TODO: gọi API gửi mail ở đây
               console.log("Gửi mail tới:", "Thuan pham", "0722040040");
               setOpen(false);
+              handleSendMail();
             }}
           >
             Xác nhận gửi

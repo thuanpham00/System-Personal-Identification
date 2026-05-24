@@ -1,12 +1,18 @@
 from google.cloud import vision
 from app.log_config import get_logger
-
+import json
+import os
+from google.oauth2 import service_account
 logger = get_logger(__name__)
 
 
 class GoogleVisionService:
     def __init__(self):
-        self.client = vision.ImageAnnotatorClient()
+        creds_json = os.getenv("GOOGLE_CREDENTIALS_JSON")
+        credentials = service_account.Credentials.from_service_account_info(
+            json.loads(creds_json)
+        )
+        self.client = vision.ImageAnnotatorClient(credentials=credentials)
 
     def extract_text_lines(self, image_path: str):
         """
