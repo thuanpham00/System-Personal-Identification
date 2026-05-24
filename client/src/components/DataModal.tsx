@@ -111,9 +111,9 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
       });
     }
 
-    if (listReminder.includes("1d")) {
+    if (listReminder.includes("7d")) {
       const remindAt = new Date(now);
-      remindAt.setDate(remindAt.getDate() + 1);
+      remindAt.setDate(remindAt.getDate() + 7);
       rows.push({
         transaction_id: transactionId,
         title: "Nhắc nhở giao dịch",
@@ -137,12 +137,13 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
       title={"Thông tin chi tiết"}
       style={{ top: 20 }}
       width={700}
+      centered
       confirmLoading={loading}
       onOk={submitForm}
       okText="Xác nhận"
       cancelText="Hủy"
       footer={[
-        <Button type="primary" danger icon={<FieldTimeOutlined />} onClick={() => setOpenReminder(true)}>
+        <Button type="primary" danger icon={<FieldTimeOutlined />} className="bg-green-500!" onClick={() => setOpenReminder(true)}>
           Hẹn nhắc
         </Button>,
         <Button type="primary" danger icon={<MailOutlined />} onClick={() => setOpen(true)}>
@@ -159,43 +160,43 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
             <Input placeholder="" disabled />
           </Form.Item>
           <Col span={12}>
-            <Form.Item label="Họ tên" name="ho_ten">
+            <Form.Item label={<strong>Họ tên</strong>} name="ho_ten">
               <Input placeholder="" disabled />
             </Form.Item>
           </Col>
 
           <Col span={12}>
-            <Form.Item label="Số CCCD" name="cccd_number">
+            <Form.Item label={<strong>Số CCCD</strong>} name="cccd_number">
               <Input placeholder="" disabled />
             </Form.Item>
           </Col>
 
           <Col span={12}>
-            <Form.Item label="Ngày cấp" name="ngay_cap">
+            <Form.Item label={<strong>Ngày cấp</strong>} name="ngay_cap">
               <Input placeholder="" disabled />
             </Form.Item>
           </Col>
 
           <Col span={12}>
-            <Form.Item label="Nơi cấp" name="noi_cap">
+            <Form.Item label={<strong>Nơi cấp</strong>} name="noi_cap">
               <Input placeholder="" disabled />
             </Form.Item>
           </Col>
 
           <Col span={12}>
-            <Form.Item label="Email nhận HĐ" name="email_nhan_hd">
+            <Form.Item label={<strong>Email nhận HĐ</strong>} name="email_nhan_hd">
               <Input placeholder="" disabled />
             </Form.Item>
           </Col>
 
           <Col span={12}>
-            <Form.Item label="User name" name="username">
+            <Form.Item label={<strong>User name</strong>} name="username">
               <Input placeholder="" disabled />
             </Form.Item>
           </Col>
 
           <Col span={12}>
-            <Form.Item label="Trạng thái check" name="status">
+            <Form.Item label={<strong>Trạng thái check</strong>} name="status">
               <Tag color={form.getFieldValue("status") === "OK" ? "green" : "red"}>
                 {form.getFieldValue("status") === "OK" ? "OK" : "FAILED"}
               </Tag>
@@ -203,7 +204,7 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
           </Col>
 
           <Col span={12}>
-            <Form.Item label="Trạng thái hoàn thành định dạnh" name="status_identification">
+            <Form.Item label={<strong>Trạng thái hoàn thành định dạnh</strong>} name="status_identification">
               <Select
                 options={[
                   { value: "completed", label: "Đã hoàn thành" },
@@ -306,8 +307,8 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
             onChange={(values) => setListReminder(values as string[])}
             options={[
               { value: "5m", label: "5 phút sau" },
-              { value: "1d", label: "1 ngày sau" },
               { value: "3d", label: "3 ngày sau" },
+              { value: "7d", label: "7 ngày sau" },
             ]}
           />
         </Space>
