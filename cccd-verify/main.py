@@ -70,15 +70,51 @@ async def health():
         "status": "ok"
     }
 
-VERIFY_EMAIL_TEMPLATE = """
-<html>
-  <body>
-    <h1>{{title}}</h1>
-    <p>{{content}}</p>
-    <a href="{{link}}">{{titleLink}}</a>
-  </body>
-</html>
-"""
+htmlTemplate = """
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+      <div style="background: #ff4d4f; padding: 24px; text-align: center;">
+        <h1 style="color: white; margin: 0; font-size: 22px;">⚠️ Xác thực thông tin thất bại</h1>
+      </div>
+      <div style="padding: 32px;">
+        <p style="font-size: 15px; color: #333;">Xin chào <strong>{{ho_ten}}</strong>,</p>
+        <p style="color: #555; line-height: 1.7;">
+          Chúng tôi đã tiến hành xác thực thông tin định danh của bạn trên hệ thống, 
+          tuy nhiên thông tin bạn cung cấp <strong style="color: #ff4d4f;">không khớp</strong> 
+          với dữ liệu căn cước công dân đã đăng ký.
+        </p>
+        <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+          <tr style="background: #fff2f0; border-left: 4px solid #ff4d4f;">
+            <td style="padding: 12px 16px; font-weight: bold; color: #333; width: 40%;">Họ và tên</td>
+            <td style="padding: 12px 16px; color: #555;">{{ho_ten}}</td>
+          </tr>
+          <tr style="border-left: 4px solid #ff4d4f;">
+            <td style="padding: 12px 16px; font-weight: bold; color: #333;">Số CCCD</td>
+            <td style="padding: 12px 16px; color: #555;">{{cccd_number}}</td>
+          </tr>
+        </table>
+        <div style="background: #fffbe6; border: 1px solid #ffe58f; border-radius: 6px; padding: 16px; margin: 20px 0;">
+          <p style="margin: 0; color: #7c5e00; font-size: 14px; line-height: 1.7;">
+            📋 <strong>Vui lòng thực hiện các bước sau:</strong><br/>
+            1. Truy cập lại hệ thống của chúng tôi<br/>
+            2. Kiểm tra và cập nhật lại thông tin cá nhân<br/>
+            3. Tải lại ảnh CCCD rõ nét, đúng mặt trước/sau<br/>
+            4. Hoàn tất xác thực tài khoản
+          </p>
+        </div>
+        <p style="color: #888; font-size: 13px;">
+          Nếu bạn cần hỗ trợ, vui lòng liên hệ bộ phận chăm sóc khách hàng của chúng tôi.
+        </p>
+        <div style="margin-top: 32px; text-align: center;">
+          <a href="#" style="background: #ff4d4f; color: white; padding: 12px 32px; border-radius: 6px; text-decoration: none; font-size: 15px;">
+            Quay lại xác thực tài khoản
+          </a>
+        </div>
+      </div>
+      <div style="background: #f9f9f9; padding: 16px; text-align: center; color: #aaa; font-size: 12px;">
+        © 2026 PersonalIdentification. All rights reserved.
+      </div>
+    </div>
+  """;
 
 class SendVerifyEmailRequest(BaseModel):  # ← phải định nghĩa TRƯỚC khi dùng
     to_address: EmailStr
@@ -89,9 +125,9 @@ RESEND_EMAIL_FROM = os.getenv("RESEND_EMAIL_FROM")
     
 @app.post("/send-verify-email")
 async def send_verify_email(body: SendVerifyEmailRequest):
-    html = VERIFY_EMAIL_TEMPLATE \
-        .replace("{{title}}", "Vui lòng xác minh email của bạn") \
-        .replace("{{content}}", "Nhấp vào nút bên dưới để xác minh email của bạn") \
+    html = htmlTemplate \
+        .replace("{{ho_ten}}", "Nguyen Van A") \
+        .replace("{{cccd_number}}", "123456789012") \
 
     try:
         result = resend.Emails.send({

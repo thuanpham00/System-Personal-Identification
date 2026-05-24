@@ -88,12 +88,33 @@ export default function DataList() {
       render: (val: string) => new Date(val).toLocaleString("vi-VN"),
     },
     {
-      title: "Trạng thái",
+      title: "Ngày nhắc lần 1",
+      dataIndex: "reminder_date_1",
+      key: "reminder_date_1",
+      render: (val: string) => new Date(val).toLocaleString("vi-VN"),
+    },
+    {
+      title: "Ngày nhắc lần 2",
+      dataIndex: "reminder_date_2",
+      key: "reminder_date_2",
+      render: (val: string) => new Date(val).toLocaleString("vi-VN"),
+    },
+    {
+      title: "Trạng thái check",
       key: "status",
       fixed: "right",
       render: (_, record) => {
         const ok = record.status;
         return ok === "OK" ? <Tag color="green">OK</Tag> : <Tag color="red">FAILED</Tag>;
+      },
+    },
+    {
+      title: "Trạng thái hoàn thành định dạnh",
+      key: "status",
+      fixed: "right",
+      render: (_, record) => {
+        const ok = record.status;
+        return ok === "OK" ? <Tag color="green">Đã hoàn thành</Tag> : <Tag color="red">Chưa hoàn thành</Tag>;
       },
     },
     {

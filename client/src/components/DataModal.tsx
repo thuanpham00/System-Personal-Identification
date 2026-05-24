@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { MailOutlined } from "@ant-design/icons";
-import { Button, Col, Form, Input, Modal, Row, Tag } from "antd";
+import { Button, Col, Form, Input, Modal, Row, Select, Tag } from "antd";
 import React, { useImperativeHandle, useState } from "react";
 
 export interface DataModalRef {
@@ -66,55 +66,6 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
     setVisible(false);
   };
 
-  const ho_ten = form.getFieldValue("ho_ten") || "";
-  const cccd_number = form.getFieldValue("cccd_number") || "";
-
-  const htmlTemplate = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
-      <div style="background: #ff4d4f; padding: 24px; text-align: center;">
-        <h1 style="color: white; margin: 0; font-size: 22px;">⚠️ Xác thực thông tin thất bại</h1>
-      </div>
-      <div style="padding: 32px;">
-        <p style="font-size: 15px; color: #333;">Xin chào <strong>${ho_ten}</strong>,</p>
-        <p style="color: #555; line-height: 1.7;">
-          Chúng tôi đã tiến hành xác thực thông tin định danh của bạn trên hệ thống, 
-          tuy nhiên thông tin bạn cung cấp <strong style="color: #ff4d4f;">không khớp</strong> 
-          với dữ liệu căn cước công dân đã đăng ký.
-        </p>
-        <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
-          <tr style="background: #fff2f0; border-left: 4px solid #ff4d4f;">
-            <td style="padding: 12px 16px; font-weight: bold; color: #333; width: 40%;">Họ và tên</td>
-            <td style="padding: 12px 16px; color: #555;">${ho_ten}</td>
-          </tr>
-          <tr style="border-left: 4px solid #ff4d4f;">
-            <td style="padding: 12px 16px; font-weight: bold; color: #333;">Số CCCD</td>
-            <td style="padding: 12px 16px; color: #555;">${cccd_number}</td>
-          </tr>
-        </table>
-        <div style="background: #fffbe6; border: 1px solid #ffe58f; border-radius: 6px; padding: 16px; margin: 20px 0;">
-          <p style="margin: 0; color: #7c5e00; font-size: 14px; line-height: 1.7;">
-            📋 <strong>Vui lòng thực hiện các bước sau:</strong><br/>
-            1. Truy cập lại hệ thống của chúng tôi<br/>
-            2. Kiểm tra và cập nhật lại thông tin cá nhân<br/>
-            3. Tải lại ảnh CCCD rõ nét, đúng mặt trước/sau<br/>
-            4. Hoàn tất xác thực tài khoản
-          </p>
-        </div>
-        <p style="color: #888; font-size: 13px;">
-          Nếu bạn cần hỗ trợ, vui lòng liên hệ bộ phận chăm sóc khách hàng của chúng tôi.
-        </p>
-        <div style="margin-top: 32px; text-align: center;">
-          <a href="#" style="background: #ff4d4f; color: white; padding: 12px 32px; border-radius: 6px; text-decoration: none; font-size: 15px;">
-            Quay lại xác thực tài khoản
-          </a>
-        </div>
-      </div>
-      <div style="background: #f9f9f9; padding: 16px; text-align: center; color: #aaa; font-size: 12px;">
-        © 2026 PersonalIdentification. All rights reserved.
-      </div>
-    </div>
-  `;
-
   const handleSendMail = async () => {
     const res = await fetch("https://system-personal-identification.onrender.com/send-verify-email", {
       method: "POST",
@@ -140,7 +91,8 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
       width={700}
       confirmLoading={loading}
       onOk={submitForm}
-      footer={null}
+      okText="Xác nhận"
+      cancelText="Hủy"
     >
       <Form layout="vertical" form={form}>
         <Row gutter={16}>
@@ -181,10 +133,21 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
           </Col>
 
           <Col span={12}>
-            <Form.Item label="Trạng thái" name="status">
+            <Form.Item label="Trạng thái check" name="status">
               <Tag color={form.getFieldValue("status") === "OK" ? "green" : "red"}>
                 {form.getFieldValue("status") === "OK" ? "OK" : "FAILED"}
               </Tag>
+            </Form.Item>
+          </Col>
+
+          <Col span={12}>
+            <Form.Item label="Trạng thái hoàn thành định dạnh" name="status_identification">
+              <Select
+                options={[
+                  { value: "completed", label: "Đã hoàn thành" },
+                  { value: "pending", label: "Chưa hoàn thành" },
+                ]}
+              />
             </Form.Item>
           </Col>
         </Row>
@@ -224,9 +187,7 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
             Xác nhận gửi
           </Button>,
         ]}
-      >
-        <div dangerouslySetInnerHTML={{ __html: htmlTemplate }} style={{ padding: "8px 0" }} />
-      </Modal>
+      ></Modal>
     </Modal>
   );
 });
