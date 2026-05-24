@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Button, Card, Col, Row, Upload, Image, Descriptions, Tag, Alert, Space } from "antd";
+import { Button, Card, Col, Row, Upload, Image, Descriptions, Tag, Alert, Space, message } from "antd";
 import { useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import type { GetProp, UploadFile, UploadProps } from "antd";
@@ -144,7 +144,7 @@ export default function PersonalIdentification() {
   };
 
   const handleSaveData = async () => {
-    const { data: dataRes, error } = await supabase
+    await supabase
       .from("data") // tên table của bạn
       .insert({
         id: uuidv4(),
@@ -159,8 +159,7 @@ export default function PersonalIdentification() {
       })
       .select(); // 👈 thêm cái này;
 
-    if (error) console.error(error);
-    console.log("Data saved:", dataRes);
+    message.success("Lưu data thành công!");
   };
 
   const handleClearImage = () => {

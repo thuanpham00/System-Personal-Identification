@@ -72,7 +72,7 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        to_address: "lehuyen30727@gmail.com",
+        to_address: form.getFieldValue("email_nhan_hd"),
         name: nameUser,
         reason,
         instruction: guide,
@@ -143,7 +143,13 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
       okText="Xác nhận"
       cancelText="Hủy"
       footer={[
-        <Button type="primary" danger icon={<FieldTimeOutlined />} className="bg-green-500!" onClick={() => setOpenReminder(true)}>
+        <Button
+          type="primary"
+          danger
+          icon={<FieldTimeOutlined />}
+          className="bg-green-500!"
+          onClick={() => setOpenReminder(true)}
+        >
           Hẹn nhắc
         </Button>,
         <Button type="primary" danger icon={<MailOutlined />} onClick={() => setOpen(true)}>
@@ -234,7 +240,7 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
           </Button>,
           <Popconfirm
             title="Xác nhận gửi email?"
-            description="Bạn có chắc chắn muốn gửi email xác thực này không?"
+            description={`Bạn có chắc chắn muốn gửi email này cho ${form.getFieldValue("email_nhan_hd")} không?`}
             okText="Gửi"
             cancelText="Hủy"
             onConfirm={() => {
