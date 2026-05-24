@@ -141,6 +141,7 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
 
     await supabase.from("reminders").insert(rows); // insert 1 hoặc 2 rows cùng lúc
     message.success("Lịch nhắc đã được thiết lập!");
+    onSubmitOk();
   };
 
   return (
