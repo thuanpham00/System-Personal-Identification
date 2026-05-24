@@ -2,6 +2,7 @@
 import { MailOutlined } from "@ant-design/icons";
 import { Button, Col, Form, Input, Modal, Row, Select, Tag } from "antd";
 import React, { useImperativeHandle, useState } from "react";
+import CreatorVerificationGuideline from "./PreviewEmailModal";
 
 export interface DataModalRef {
   handleCreate: () => void;
@@ -28,6 +29,7 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
       handleUpdate(Data: any) {
         form.setFieldsValue({ ...Data });
         setVisible(true);
+        setNameUser(Data.ho_ten);
       },
     }),
     [form],
@@ -72,6 +74,9 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         to_address: "phamminhthuan912@gmail.com",
+        name: nameUser,
+        reason,
+        instruction: guide,
       }),
     });
 
@@ -79,6 +84,10 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
       console.log("Email sent successfully");
     }
   };
+
+  const [nameUser, setNameUser] = useState<string>("");
+  const [reason, setReason] = useState<string>("");
+  const [guide, setGuide] = useState<string>("");
 
   return (
     <Modal
@@ -161,7 +170,7 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
         title="Preview email"
         open={open}
         onCancel={() => setOpen(false)}
-        width={680}
+        width={900}
         style={{ top: 20 }}
         styles={{
           body: {
@@ -187,7 +196,16 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
             Xác nhận gửi
           </Button>,
         ]}
-      ></Modal>
+      >
+        <CreatorVerificationGuideline
+          nameUser={nameUser}
+          reason={reason}
+          instruction={guide}
+          setGuide={setGuide}
+          setNameUser={setNameUser}
+          setReason={setReason}
+        />
+      </Modal>
     </Modal>
   );
 });
