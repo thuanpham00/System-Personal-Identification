@@ -93,19 +93,19 @@ export default function DataList() {
       title: "Ngày nhắc 5 phút (nháp)",
       dataIndex: "reminder_5m",
       key: "reminder_5m",
-      render: (val: string) => new Date(val).toLocaleString("vi-VN"),
+      render: (val: string) => val ? new Date(val).toLocaleString("vi-VN") : null,
     },
     {
       title: "Ngày nhắc lần 1",
       dataIndex: "reminder_3day",
       key: "reminder_3day",
-      render: (val: string) => new Date(val).toLocaleString("vi-VN"),
+      render: (val: string) => val ?  new Date(val).toLocaleString("vi-VN") : null,
     },
     {
       title: "Ngày nhắc lần 2",
       dataIndex: "reminder_7day",
       key: "reminder_7day",
-      render: (val: string) => new Date(val).toLocaleString("vi-VN"),
+      render: (val: string) => val ? new Date(val).toLocaleString("vi-VN") : null,
     },
     {
       title: "Trạng thái check",
