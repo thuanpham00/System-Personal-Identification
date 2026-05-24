@@ -73,7 +73,7 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        to_address: "huyenle30723@gmail.com",
+        to_address: "lehuyen30727@gmail.com",
         name: nameUser,
         reason,
         instruction: guide,

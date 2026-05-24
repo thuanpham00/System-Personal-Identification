@@ -92,13 +92,6 @@ htmlTemplate = """
     <p style="margin:8px 0;">Nếu bạn cần hỗ trợ thêm hoặc có bất kỳ câu hỏi nào khác, vui lòng liên hệ: <a href="mailto:op.brand@themetub.com" style="color:#1155cc;text-decoration:none;">op.brand@themetub.com</a></p>
     <p style="margin:8px 0;">Trân trọng,<br/><strong>meCreator Team</strong></p>
   </div>
-
-  <hr style="border:none;border-top:1px solid #ddd;margin:28px 0;"/>
-  <h2 style="font-size:15px;font-weight:bold;margin:28px 0 8px;">Checklist cho Ops</h2>
-
-  <hr style="border:none;border-top:1px solid #ddd;margin:28px 0;"/>
-  <h2 style="font-size:15px;font-weight:bold;margin:28px 0 8px;">Open Discussion / Future Improvement</h2>
-
 </div>
 """
 
