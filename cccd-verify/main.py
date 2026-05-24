@@ -127,7 +127,7 @@ RESEND_EMAIL_FROM = os.getenv("RESEND_EMAIL_FROM")
 async def send_verify_email(body: SendVerifyEmailRequest):
     html = htmlTemplate \
         .replace("{{ho_ten}}", "Nguyen Van A") \
-        .replace("{{cccd_number}}", "123456789012") \
+        .replace("{{cccd_number}}", "123456789012")
 
     try:
         result = resend.Emails.send({
