@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { MailOutlined } from "@ant-design/icons";
-import { Button, Col, Form, Input, Modal, Row, Select, Tag } from "antd";
+import { Button, Col, Form, Input, message, Modal, Popconfirm, Row, Select, Tag } from "antd";
 import React, { useImperativeHandle, useState } from "react";
 import CreatorVerificationGuideline from "./PreviewEmailModal";
 
@@ -69,20 +69,21 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
   };
 
   const handleSendMail = async () => {
-    const res = await fetch("https://system-personal-identification.onrender.com/send-verify-email", {
+    await fetch("https://system-personal-identification.onrender.com/send-verify-email", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        to_address: "phamminhthuan912@gmail.com",
+        to_address: "huyenle30723@gmail.com",
         name: nameUser,
         reason,
         instruction: guide,
       }),
     });
 
-    if (res.ok) {
-      console.log("Email sent successfully");
-    }
+    setGuide("");
+    setReason("");
+    setNameUser("");
+    message.success("Email đã được gửi đi!");
   };
 
   const [nameUser, setNameUser] = useState<string>("");
@@ -182,19 +183,20 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
           <Button key="cancel" onClick={() => setOpen(false)}>
             Hủy
           </Button>,
-          <Button
-            key="send"
-            type="primary"
-            icon={<MailOutlined />}
-            onClick={() => {
-              // TODO: gọi API gửi mail ở đây
-              console.log("Gửi mail tới:", "Thuan pham", "0722040040");
-              setOpen(false);
+          <Popconfirm
+            title="Xác nhận gửi email?"
+            description="Bạn có chắc chắn muốn gửi email xác thực này không?"
+            okText="Gửi"
+            cancelText="Hủy"
+            onConfirm={() => {
               handleSendMail();
+              setOpen(false);
             }}
           >
-            Xác nhận gửi
-          </Button>,
+            <Button key="send" type="primary" icon={<MailOutlined />}>
+              Xác nhận gửi
+            </Button>
+          </Popconfirm>,
         ]}
       >
         <CreatorVerificationGuideline
