@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { MailOutlined } from "@ant-design/icons";
-import { Button, Col, Form, Input, message, Modal, Popconfirm, Row, Select, Tag } from "antd";
+import { FieldTimeOutlined, MailOutlined } from "@ant-design/icons";
+import { Button, Col, Form, Input, message, Modal, Popconfirm, Row, Select, Space, Tag } from "antd";
 import React, { useImperativeHandle, useState } from "react";
 import CreatorVerificationGuideline from "./PreviewEmailModal";
+import { supabase } from "../utils/supabase";
 
 export interface DataModalRef {
-  handleCreate: () => void;
   handleUpdate: (Data: any) => void;
 }
 interface DataModalProps {
@@ -18,14 +18,15 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
   const [open, setOpen] = useState(false);
+  const [openReminder, setOpenReminder] = useState(false);
+  const [nameUser, setNameUser] = useState<string>("");
+  const [reason, setReason] = useState<string>("");
+  const [guide, setGuide] = useState<string>("");
+  const [listReminder, setListReminder] = useState<string[]>([]);
 
   useImperativeHandle<any, DataModalRef>(
     ref,
     () => ({
-      handleCreate() {
-        form.resetFields();
-        setVisible(true);
-      },
       handleUpdate(Data: any) {
         form.setFieldsValue({ ...Data });
         setVisible(true);
@@ -35,29 +36,27 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
     [form],
   );
 
-  // const getPayload = () => {
-  //   const { ...rest } = form.getFieldsValue();
-  //   return { Data: rest };
-  // };
-
   const submitForm = async () => {
     try {
       setLoading(true);
-      // const valid = await form.validateFields();
-      // const data = getPayload();
-      // let res: any = undefined;
-      // switch (status) {
-      //   case "create":
-      //     // res = await DataApi.create(data);
-      //     message.success("Create Data successfully!");
-      //     break;
-      //   case "update":
-      //     // res = await DataApi.update(selectedData?.id || 0, data);
-      //     message.success("Update Data successfully!");
-      //     break;
-      // }
+
+      const { error } = await supabase
+        .from("data")
+        .update({
+          status_identification: form.getFieldValue("status_identification"),
+        })
+        .eq("id", form.getFieldValue("id"));
+
+      if (error) {
+        throw error;
+      }
+
+      message.success("Cập nhật thành công!");
+
       onSubmitOk();
       handleClose();
+    } catch (error) {
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -86,9 +85,48 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
     message.success("Email đã được gửi đi!");
   };
 
-  const [nameUser, setNameUser] = useState<string>("");
-  const [reason, setReason] = useState<string>("");
-  const [guide, setGuide] = useState<string>("");
+  const handleReminder = async (transactionId: string) => {
+    const now = new Date();
+    const rows = [];
+
+    if (listReminder.includes("5m")) {
+      const remindAt = new Date(now);
+      remindAt.setMinutes(remindAt.getMinutes() + 5);
+      rows.push({
+        transaction_id: transactionId,
+        title: "Nhắc nhở giao dịch",
+        message: `Bạn có giao dịch cần xử lý: ${transactionId}`,
+        remind_at: remindAt.toISOString(),
+      });
+    }
+
+    if (listReminder.includes("3d")) {
+      const remindAt = new Date(now);
+      remindAt.setDate(remindAt.getDate() + 3);
+      rows.push({
+        transaction_id: transactionId,
+        title: "Nhắc nhở giao dịch",
+        message: `Bạn có giao dịch cần xử lý: ${transactionId}`,
+        remind_at: remindAt.toISOString(),
+      });
+    }
+
+    if (listReminder.includes("1d")) {
+      const remindAt = new Date(now);
+      remindAt.setDate(remindAt.getDate() + 1);
+      rows.push({
+        transaction_id: transactionId,
+        title: "Nhắc nhở giao dịch",
+        message: `Bạn có giao dịch cần xử lý: ${transactionId}`,
+        remind_at: remindAt.toISOString(),
+      });
+    }
+
+    if (rows.length === 0) return;
+
+    await supabase.from("reminders").insert(rows); // insert 1 hoặc 2 rows cùng lúc
+    message.success("Lịch nhắc đã được thiết lập!");
+  };
 
   return (
     <Modal
@@ -103,9 +141,23 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
       onOk={submitForm}
       okText="Xác nhận"
       cancelText="Hủy"
+      footer={[
+        <Button type="primary" danger icon={<FieldTimeOutlined />} onClick={() => setOpenReminder(true)}>
+          Hẹn nhắc
+        </Button>,
+        <Button type="primary" danger icon={<MailOutlined />} onClick={() => setOpen(true)}>
+          Gửi mail
+        </Button>,
+        <Button key="submit" type="primary" onClick={submitForm} loading={loading}>
+          Xác nhận
+        </Button>,
+      ]}
     >
       <Form layout="vertical" form={form}>
         <Row gutter={16}>
+          <Form.Item hidden label="Họ tên" name="id">
+            <Input placeholder="" disabled />
+          </Form.Item>
           <Col span={12}>
             <Form.Item label="Họ tên" name="ho_ten">
               <Input placeholder="" disabled />
@@ -163,10 +215,6 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
         </Row>
       </Form>
 
-      <Button type="primary" icon={<MailOutlined />} onClick={() => setOpen(true)}>
-        Gửi mail
-      </Button>
-
       <Modal
         title="Preview email"
         open={open}
@@ -207,6 +255,62 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
           setNameUser={setNameUser}
           setReason={setReason}
         />
+      </Modal>
+
+      <Modal
+        title="Chọn lịch nhắc tôi"
+        open={openReminder}
+        centered
+        width={400}
+        style={{ top: 20 }}
+        styles={{
+          body: {
+            maxHeight: "70vh",
+            overflowY: "auto",
+          },
+        }}
+        footer={[
+          <Button
+            key="cancel"
+            onClick={() => {
+              setOpenReminder(false);
+              setListReminder([]);
+            }}
+          >
+            Hủy
+          </Button>,
+          <Popconfirm
+            title="Xác nhận thiết lập lịch nhắc?"
+            description="Bạn có chắc chắn muốn thiết lập lịch nhắc này không?"
+            okText="Gửi"
+            cancelText="Hủy"
+            onConfirm={() => {
+              handleReminder(form.getFieldValue("id"));
+              setOpenReminder(false);
+              setListReminder([]);
+            }}
+          >
+            <Button key="send" type="primary" icon={<MailOutlined />}>
+              Xác nhận gửi
+            </Button>
+          </Popconfirm>,
+        ]}
+      >
+        <Space style={{ width: "100%" }} vertical>
+          <Select
+            mode="multiple"
+            allowClear
+            style={{ width: "100%" }}
+            placeholder="Please select"
+            value={listReminder}
+            onChange={(values) => setListReminder(values as string[])}
+            options={[
+              { value: "5m", label: "5 phút sau" },
+              { value: "1d", label: "1 ngày sau" },
+              { value: "3d", label: "3 ngày sau" },
+            ]}
+          />
+        </Space>
       </Modal>
     </Modal>
   );

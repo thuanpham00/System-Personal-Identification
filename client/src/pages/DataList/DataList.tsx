@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useRef, useState } from "react";
 import { Table, Tag, Spin, Typography, Space, Button, message } from "antd";
 import type { ColumnsType } from "antd/es/table";
@@ -17,6 +18,9 @@ interface DataRecord {
   username: string;
   created_at: string;
   status: string;
+  status_identification: string;
+  reminder_date_1: string;
+  reminder_date_2: string;
 }
 
 export default function DataList() {
@@ -24,21 +28,18 @@ export default function DataList() {
   const [loading, setLoading] = useState(true);
   const dataItemRef = useRef<DataModalRef>(null);
 
+  const fetchData = async () => {
+    const { data, error } = await supabase.from("data").select("*").order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Lỗi fetch data:", error);
+    } else {
+      setRecords(data || []);
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      const { data, error } = await supabase
-        .from("data")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        console.error("Lỗi fetch data:", error);
-      } else {
-        setRecords(data || []);
-      }
-      setLoading(false);
-    };
-
     fetchData();
   }, []);
 
@@ -110,11 +111,15 @@ export default function DataList() {
     },
     {
       title: "Trạng thái hoàn thành định dạnh",
-      key: "status",
+      key: "status_identification",
       fixed: "right",
       render: (_, record) => {
-        const ok = record.status;
-        return ok === "OK" ? <Tag color="green">Đã hoàn thành</Tag> : <Tag color="red">Chưa hoàn thành</Tag>;
+        const ok = record.status_identification;
+        return ok === "completed" ? (
+          <Tag color="green">Đã hoàn thành</Tag>
+        ) : (
+          <Tag color="red">Chưa hoàn thành</Tag>
+        );
       },
     },
     {
@@ -150,7 +155,7 @@ export default function DataList() {
         />
       </Spin>
 
-      <DataModal ref={dataItemRef} onClose={() => {}} onSubmitOk={() => {}} />
+      <DataModal ref={dataItemRef} onClose={() => {}} onSubmitOk={fetchData} />
     </div>
   );
 }
