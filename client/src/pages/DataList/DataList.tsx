@@ -22,6 +22,7 @@ interface DataRecord {
   reminder_3day: string;
   reminder_7day: string;
   reminder_5m: string;
+  sdt: string;
 }
 
 export default function DataList() {
@@ -95,6 +96,11 @@ export default function DataList() {
       title: "Email nhận HĐ",
       dataIndex: "email_nhan_hd",
       key: "email_nhan_hd",
+    },
+    {
+      title: "SĐT",
+      dataIndex: "sdt",
+      key: "sdt",
     },
     {
       title: "Tên tài khoản",
