@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button, Card, Col, Row, Upload, Image, Descriptions, Tag, Alert, Space, message } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import type { GetProp, UploadFile, UploadProps } from "antd";
 import { supabase } from "../../utils/supabase";
@@ -46,25 +46,92 @@ export default function PersonalIdentification() {
     setPreviewOpen(true);
   };
 
+  const uploadToSupabase = async (fileObj: File) => {
+    const fileExt = fileObj.name.split(".").pop() || "png";
+
+    const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`;
+
+    const { data, error } = await supabase.storage.from("DataImageSave").upload(fileName, fileObj, {
+      cacheControl: "3600",
+      upsert: true,
+    });
+
+    if (error) throw error;
+
+    const { data: publicData } = supabase.storage.from("DataImageSave").getPublicUrl(data.path);
+
+    return publicData.publicUrl;
+  };
+
+  const [pasteTarget, setPasteTarget] = useState<"form" | "cccd" | "other">("form");
+
+  useEffect(() => {
+    const handlePaste = async (event: ClipboardEvent) => {
+      const items = event.clipboardData?.items;
+
+      if (!items) return;
+
+      for (const item of items) {
+        if (item.type.startsWith("image/")) {
+          const blob = item.getAsFile();
+
+          if (!blob) return;
+
+          setLoading(true);
+          try {
+            const file = new File([blob], `paste-${Date.now()}.png`, {
+              type: blob.type,
+            });
+
+            const publicUrl = await uploadToSupabase(file);
+
+            // Ensure file is RcFile type with required properties
+            const uploadFile: UploadFile = {
+              uid: Date.now().toString(),
+              name: file.name,
+              status: "done",
+              url: publicUrl,
+              thumbUrl: publicUrl,
+              percent: 100,
+              type: file.type,
+              originFileObj: file as any,
+            };
+
+            if (pasteTarget === "form") {
+              setFormFile(uploadFile);
+            }
+
+            if (pasteTarget === "cccd") {
+              setCccdFile(uploadFile);
+            }
+
+            if (pasteTarget === "other") {
+              setFileList((prev) => [...prev, uploadFile]);
+            }
+
+            message.success("Paste ảnh thành công!");
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          } catch (error: any) {
+            message.error("Upload ảnh thất bại!");
+          } finally {
+            setLoading(false);
+          }
+        }
+      }
+    };
+
+    document.addEventListener("paste", handlePaste);
+
+    return () => {
+      document.removeEventListener("paste", handlePaste);
+    };
+  }, [pasteTarget]);
+
   const handleUpload: UploadProps["customRequest"] = async ({ file, onError, onSuccess }) => {
     try {
-      const fileObj = file as File;
-      const fileExt = fileObj.name.split(".").pop() || "png";
-      const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`;
+      const publicUrl = await uploadToSupabase(file as File);
 
-      const { data, error } = await supabase.storage.from("DataImageSave").upload(fileName, fileObj, {
-        cacheControl: "3600",
-        upsert: true,
-      });
-
-      if (error) {
-        onError?.(error);
-        return;
-      }
-
-      const { data: publicData } = supabase.storage.from("DataImageSave").getPublicUrl(data.path);
-
-      onSuccess?.({ publicUrl: publicData.publicUrl });
+      onSuccess?.({ publicUrl });
     } catch (err) {
       onError?.(err as Error);
     }
@@ -206,67 +273,80 @@ export default function PersonalIdentification() {
           />
         </Col>
         <Col span={8}>
-          <h3 className="mb-2 font-semibold">Ảnh Form</h3>
-
-          <Upload
-            customRequest={handleUpload}
-            listType="picture-card"
-            fileList={formFile ? [formFile] : []}
-            onPreview={handlePreview}
-            onChange={handleChangeForm}
-            maxCount={1}
-            className="pi-upload"
-          >
-            {!formFile && (
-              <button style={{ border: 0, background: "none" }} type="button">
-                <PlusOutlined />
-                <div style={{ marginTop: 8 }}>Upload</div>
-              </button>
-            )}
-          </Upload>
+          <div>
+            <div className="flex gap-2 items-center mb-4">
+              <h3 className="font-semibold">Ảnh Form</h3>
+              <Button onClick={() => setPasteTarget("form")}>Paste</Button>
+            </div>
+            <Upload
+              customRequest={handleUpload}
+              listType="picture-card"
+              fileList={formFile ? [formFile] : []}
+              onPreview={handlePreview}
+              onChange={handleChangeForm}
+              maxCount={1}
+              className="pi-upload"
+            >
+              {!formFile && (
+                <button style={{ border: 0, background: "none" }} type="button">
+                  <PlusOutlined />
+                  <div style={{ marginTop: 8 }}>Upload</div>
+                </button>
+              )}
+            </Upload>
+          </div>
         </Col>
 
         <Col span={8}>
-          <h3 className="mb-2 font-semibold">Ảnh CCCD</h3>
-
-          <Upload
-            customRequest={handleUpload}
-            listType="picture-card"
-            fileList={cccdFile ? [cccdFile] : []}
-            onPreview={handlePreview}
-            onChange={handleChangeCccd}
-            maxCount={1}
-            className="pi-upload"
-          >
-            {!cccdFile && (
-              <button style={{ border: 0, background: "none" }} type="button">
-                <PlusOutlined />
-                <div style={{ marginTop: 8 }}>Upload</div>
-              </button>
-            )}
-          </Upload>
+          <div>
+            <div className="flex gap-2 items-center mb-4">
+              <h3 className="font-semibold">Ảnh CCCD</h3>
+              <Button onClick={() => setPasteTarget("cccd")}>Paste</Button>
+            </div>
+            <Upload
+              customRequest={handleUpload}
+              listType="picture-card"
+              fileList={cccdFile ? [cccdFile] : []}
+              onPreview={handlePreview}
+              onChange={handleChangeCccd}
+              maxCount={1}
+              className="pi-upload"
+            >
+              {!cccdFile && (
+                <button style={{ border: 0, background: "none" }} type="button">
+                  <PlusOutlined />
+                  <div style={{ marginTop: 8 }}>Upload</div>
+                </button>
+              )}
+            </Upload>
+          </div>
         </Col>
 
         <Col span={8}>
-          <h3 className="mb-2 font-semibold">Ảnh khác</h3>
+          <div>
+            <div className="flex gap-2 items-center mb-4">
+              <h3 className="font-semibold">Ảnh khác</h3>
+              <Button onClick={() => setPasteTarget("other")}>Paste</Button>
+            </div>
 
-          <Upload
-            customRequest={handleUpload}
-            listType="picture-card"
-            fileList={fileList}
-            onPreview={handlePreview}
-            onChange={handleChange}
-            className="pi-upload"
-            multiple
-            maxCount={2}
-          >
-            {fileList.length > 2 ? null : (
-              <button style={{ border: 0, background: "none" }} type="button">
-                <PlusOutlined />
-                <div style={{ marginTop: 8 }}>Upload</div>
-              </button>
-            )}
-          </Upload>
+            <Upload
+              customRequest={handleUpload}
+              listType="picture-card"
+              fileList={fileList}
+              onPreview={handlePreview}
+              onChange={handleChange}
+              className="pi-upload"
+              multiple
+              maxCount={2}
+            >
+              {fileList.length > 2 ? null : (
+                <button style={{ border: 0, background: "none" }} type="button">
+                  <PlusOutlined />
+                  <div style={{ marginTop: 8 }}>Upload</div>
+                </button>
+              )}
+            </Upload>
+          </div>
         </Col>
       </Row>
 
