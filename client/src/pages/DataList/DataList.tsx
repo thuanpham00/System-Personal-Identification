@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useRef, useState } from "react";
-import { Table, Tag, Spin, Typography, Space, Button, message } from "antd";
+import { Table, Tag, Spin, Typography, Space, Button, message, Popconfirm } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { supabase } from "../../utils/supabase";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
@@ -43,6 +43,24 @@ export default function DataList() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const handleDelete = async (id: string) => {
+    try {
+      const { error } = await supabase.from("data").delete().eq("id", id);
+
+      if (error) {
+        message.error("Xóa thất bại");
+        console.error(error);
+        return;
+      }
+
+      message.success("Xóa thành công");
+      fetchData();
+    } catch (err) {
+      console.error(err);
+      message.error("Có lỗi xảy ra");
+    }
+  };
 
   const columns: ColumnsType<DataRecord> = [
     {
@@ -93,19 +111,19 @@ export default function DataList() {
       title: "Ngày nhắc 5 phút (nháp)",
       dataIndex: "reminder_5m",
       key: "reminder_5m",
-      render: (val: string) => val ? new Date(val).toLocaleString("vi-VN") : null,
+      render: (val: string) => (val ? new Date(val).toLocaleString("vi-VN") : null),
     },
     {
       title: "Ngày nhắc lần 1",
       dataIndex: "reminder_3day",
       key: "reminder_3day",
-      render: (val: string) => val ?  new Date(val).toLocaleString("vi-VN") : null,
+      render: (val: string) => (val ? new Date(val).toLocaleString("vi-VN") : null),
     },
     {
       title: "Ngày nhắc lần 2",
       dataIndex: "reminder_7day",
       key: "reminder_7day",
-      render: (val: string) => val ? new Date(val).toLocaleString("vi-VN") : null,
+      render: (val: string) => (val ? new Date(val).toLocaleString("vi-VN") : null),
     },
     {
       title: "Trạng thái check",
@@ -138,9 +156,15 @@ export default function DataList() {
           <Button type="primary" onClick={() => dataItemRef.current?.handleUpdate(record)}>
             <EditOutlined />
           </Button>
-          <Button danger onClick={() => message.error("Chưa triển khai chức năng")}>
-            <DeleteOutlined />
-          </Button>
+          <Popconfirm
+            title="Xác nhận xóa"
+            description="Bạn có chắc muốn xóa dữ liệu này không?"
+            okText="Xóa"
+            cancelText="Hủy"
+            onConfirm={() => handleDelete(record.id)} // record.id là dòng hiện tại
+          >
+            <Button danger icon={<DeleteOutlined />} />
+          </Popconfirm>
         </Space>
       ),
     },

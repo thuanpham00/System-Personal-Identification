@@ -44,6 +44,8 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
         .from("data")
         .update({
           status_identification: form.getFieldValue("status_identification"),
+          email_nhan_hd: form.getFieldValue("email_nhan_hd"),
+          sdt: form.getFieldValue("sdt"),
         })
         .eq("id", form.getFieldValue("id"));
 
@@ -207,7 +209,22 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
 
           <Col span={12}>
             <Form.Item label={<strong>Email nhận HĐ</strong>} name="email_nhan_hd">
-              <Input placeholder="" disabled />
+              <Input placeholder="" />
+            </Form.Item>
+          </Col>
+
+          <Col span={12}>
+            <Form.Item
+              label={<strong>Số điện thoại</strong>}
+              name="sdt"
+              rules={[
+                {
+                  pattern: /^(0|\+84)[0-9]{9,10}$/,
+                  message: "Số điện thoại không hợp lệ",
+                },
+              ]}
+            >
+              <Input placeholder="Nhập số điện thoại" />
             </Form.Item>
           </Col>
 
