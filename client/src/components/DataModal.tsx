@@ -46,6 +46,9 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
           status_identification: form.getFieldValue("status_identification"),
           email_nhan_hd: form.getFieldValue("email_nhan_hd"),
           sdt: form.getFieldValue("sdt"),
+          cccd_number: form.getFieldValue("cccd_number"),
+          ho_ten: form.getFieldValue("ho_ten"),
+          username: form.getFieldValue("username"),
         })
         .eq("id", form.getFieldValue("id"));
 
@@ -185,13 +188,13 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
           </Form.Item>
           <Col span={12}>
             <Form.Item label={<strong>Họ tên</strong>} name="ho_ten">
-              <Input placeholder="" disabled />
+              <Input placeholder="" />
             </Form.Item>
           </Col>
 
           <Col span={12}>
             <Form.Item label={<strong>Số CCCD</strong>} name="cccd_number">
-              <Input placeholder="" disabled />
+              <Input placeholder="" />
             </Form.Item>
           </Col>
 
@@ -230,7 +233,7 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
 
           <Col span={12}>
             <Form.Item label={<strong>User name</strong>} name="username">
-              <Input placeholder="" disabled />
+              <Input placeholder="" />
             </Form.Item>
           </Col>
 
