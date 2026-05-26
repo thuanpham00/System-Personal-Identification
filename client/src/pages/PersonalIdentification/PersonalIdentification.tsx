@@ -379,7 +379,7 @@ export default function PersonalIdentification() {
 
           <Descriptions.Item label="Nơi cấp">{data?.noi_cap || "-"}</Descriptions.Item>
           <Descriptions.Item label="Email nhận hợp đồng">{data?.email || "-"}</Descriptions.Item>
-          <Descriptions.Item label="Nơi cấp">{data?.username || "-"}</Descriptions.Item>
+          <Descriptions.Item label="Tên tài khoản">{data?.username || "-"}</Descriptions.Item>
         </Descriptions>
       </Card>
 
