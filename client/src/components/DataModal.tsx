@@ -90,8 +90,8 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
     message.success("Email đã được gửi đi!");
   };
 
-  const handleReminder = async (transactionId: string) => {
-    const now = new Date();
+  const handleReminder = async (transactionId: string, name: string) => {
+    const now = new Date(); 
     const rows = [];
 
     await supabase
@@ -114,8 +114,8 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
       remindAt.setMinutes(remindAt.getMinutes() + 5);
       rows.push({
         transaction_id: transactionId,
-        title: "Nhắc nhở giao dịch",
-        message: `Bạn có giao dịch cần xử lý: ${transactionId}`,
+        title: "Nhắc nhở định danh - Lần 1",
+        message: `Bạn có lịch nhắc nhở định danh cần xử lý: ${name} - ${transactionId} - lần 1`,
         remind_at: remindAt.toISOString(),
       });
     }
@@ -125,8 +125,8 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
       remindAt.setDate(remindAt.getDate() + 3);
       rows.push({
         transaction_id: transactionId,
-        title: "Nhắc nhở giao dịch",
-        message: `Bạn có giao dịch cần xử lý: ${transactionId}`,
+        title: "Nhắc nhở định danh - Lần 2",
+        message: `Bạn có lịch nhắc nhở định danh cần xử lý: ${name} - ${transactionId} - lần 2`,
         remind_at: remindAt.toISOString(),
       });
     }
@@ -136,8 +136,8 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
       remindAt.setDate(remindAt.getDate() + 7);
       rows.push({
         transaction_id: transactionId,
-        title: "Nhắc nhở giao dịch",
-        message: `Bạn có giao dịch cần xử lý: ${transactionId}`,
+        title: "Nhắc nhở định danh - Lần 3",
+        message: `Bạn có lịch nhắc nhở định danh cần xử lý: ${name} - ${transactionId} - lần 3`,
         remind_at: remindAt.toISOString(),
       });
     }
@@ -328,7 +328,7 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
             okText="Gửi"
             cancelText="Hủy"
             onConfirm={() => {
-              handleReminder(form.getFieldValue("id"));
+              handleReminder(form.getFieldValue("id"), form.getFieldValue("ho_ten"));
               setOpenReminder(false);
               setListReminder([]);
             }}
