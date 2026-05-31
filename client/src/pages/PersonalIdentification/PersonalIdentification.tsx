@@ -36,6 +36,7 @@ export default function PersonalIdentification() {
   const [previewImage, setPreviewImage] = useState("");
 
   const [data, setData] = useState<Data | null>(null);
+  const [messageData, setMessageData] = useState("");
 
   const handlePreview = async (file: UploadFile) => {
     if (!file.url && !file.preview) {
@@ -198,6 +199,7 @@ export default function PersonalIdentification() {
       email: result.merged_other_fields.email_nhan_hop_dong,
       username: result.merged_other_fields.ten_tai_khoan,
     });
+    setMessageData(result.message);
     setLoading(false);
   };
 
@@ -391,6 +393,8 @@ export default function PersonalIdentification() {
         }}
         src={previewImage}
       />
+
+      <span className="text-red-500">{messageData}</span>
 
       <Button onClick={handleSaveData} className="mt-4 w-full py-4!" type="primary" disabled={!data}>
         LƯU DATA
