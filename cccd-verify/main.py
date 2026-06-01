@@ -172,7 +172,8 @@ async def verify_two_images(body: VerifyTwoRequest):
                 
         merged_fields = {
             "ten_tai_khoan": "",
-            "email_nhan_hop_dong": ""
+            "email_nhan_hop_dong": "",
+            "email_dang_nhap": "",
         }
 
         for item in other_results:

@@ -76,7 +76,8 @@ class OCRService:
     def parse_other_fields(self, lines: List[str]) -> Dict[str, str]:
         result = {
             "ten_tai_khoan": "",
-            "email_nhan_hop_dong": ""
+            "email_nhan_hop_dong": "",
+            "email_dang_nhap": "",
         }
 
         for i, line in enumerate(lines):
@@ -95,6 +96,15 @@ class OCRService:
                         result["email_nhan_hop_dong"] = m.group()
                     else:
                         result["email_nhan_hop_dong"] = lines[i + 1].strip()
+
+            # EMAIL ĐĂNG NHẬP
+            if "email đăng nhập" in norm or "email dang nhap" in norm:
+                if i + 1 < len(lines):
+                    m = re.search(r"[\w\.-]+@[\w\.-]+\.\w+", lines[i + 1])
+                    if m:
+                        result["email_dang_nhap"] = m.group()
+                    else:
+                        result["email_dang_nhap"] = lines[i + 1].strip()
 
         return result
 
