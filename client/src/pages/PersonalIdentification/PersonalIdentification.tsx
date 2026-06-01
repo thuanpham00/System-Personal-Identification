@@ -14,6 +14,7 @@ type Data = {
   noi_cap: string;
   email: string;
   username: string;
+  email_login: string;
 };
 
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
@@ -198,6 +199,7 @@ export default function PersonalIdentification() {
       noi_cap: result.form_data.noi_cap,
       email: result.merged_other_fields.email_nhan_hop_dong,
       username: result.merged_other_fields.ten_tai_khoan,
+      email_login: result.merged_other_fields.email_dang_nhap,
     });
     setMessageData(result.message);
     setLoading(false);
@@ -225,6 +227,7 @@ export default function PersonalIdentification() {
         username: data?.username || "...",
         created_at: new Date().toISOString(),
         status: data?.status || "...",
+        email_login: data?.email_login || "...",
       })
       .select(); // 👈 thêm cái này;
 
@@ -381,6 +384,7 @@ export default function PersonalIdentification() {
 
           <Descriptions.Item label="Nơi cấp">{data?.noi_cap || "-"}</Descriptions.Item>
           <Descriptions.Item label="Email nhận hợp đồng">{data?.email || "-"}</Descriptions.Item>
+          <Descriptions.Item label="Email đăng nhập">{data?.email_login || "-"}</Descriptions.Item>
           <Descriptions.Item label="Tên tài khoản">{data?.username || "-"}</Descriptions.Item>
         </Descriptions>
       </Card>
@@ -394,7 +398,7 @@ export default function PersonalIdentification() {
         src={previewImage}
       />
 
-      <span className="text-red-500">{messageData}</span>
+      <span className="text-red-500 mt-4 font-semibold block">{messageData}</span>
 
       <Button onClick={handleSaveData} className="mt-4 w-full py-4!" type="primary" disabled={!data}>
         LƯU DATA

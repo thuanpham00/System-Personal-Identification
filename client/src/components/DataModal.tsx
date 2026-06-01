@@ -22,6 +22,7 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
   const [nameUser, setNameUser] = useState<string>("");
   const [reason, setReason] = useState<string>("");
   const [guide, setGuide] = useState<string>("");
+  const [selectedReasons, setSelectedReasons] = useState<number[]>([]);
   const [listReminder, setListReminder] = useState<string[]>([]);
 
   useImperativeHandle<any, DataModalRef>(
@@ -77,7 +78,7 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        to_address: form.getFieldValue("email_nhan_hd"),
+        to_address: "phamminhthuan912@gmail.com",
         name: nameUser,
         reason,
         instruction: guide,
@@ -91,7 +92,7 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
   };
 
   const handleReminder = async (transactionId: string, name: string) => {
-    const now = new Date(); 
+    const now = new Date();
     const rows = [];
 
     await supabase
@@ -157,7 +158,7 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
       open={visible}
       title={"Thông tin chi tiết"}
       style={{ top: 20 }}
-      width={700}
+      width={900}
       centered
       confirmLoading={loading}
       onOk={submitForm}
@@ -212,6 +213,12 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
 
           <Col span={12}>
             <Form.Item label={<strong>Email nhận HĐ</strong>} name="email_nhan_hd">
+              <Input placeholder="" />
+            </Form.Item>
+          </Col>
+
+          <Col span={12}>
+            <Form.Item label={<strong>Email đăng nhập</strong>} name="email_login">
               <Input placeholder="" />
             </Form.Item>
           </Col>
@@ -297,6 +304,8 @@ export const DataModal = React.forwardRef(({ onClose, onSubmitOk }: DataModalPro
           setGuide={setGuide}
           setNameUser={setNameUser}
           setReason={setReason}
+          selectedReasons={selectedReasons}
+          setSelectedReasons={setSelectedReasons}
         />
       </Modal>
 

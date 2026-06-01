@@ -10,6 +10,7 @@ import uvicorn
 import httpx
 import tempfile
 import os
+import html
 
 from pydantic import BaseModel, EmailStr
 from typing import List ,Optional, Dict
@@ -113,17 +114,21 @@ RESEND_EMAIL_FROM = os.getenv("RESEND_EMAIL_FROM")
     
 @app.post("/send-verify-email")
 async def send_verify_email(body: SendVerifyEmailRequest):
-    html = htmlTemplate \
-        .replace("{{name}}", body.name or "Nguyen Van A") \
-        .replace("{{reason}}", body.reason or "Lý do từ chối định danh") \
-        .replace("{{instruction}}", body.instruction or "Hướng dẫn bổ sung")
+    safe_name = html.escape(body.name or "Nguyen Van A")
+    safe_reason = html.escape(body.reason or "Lý do từ chối định danh").replace("\n", "<br/>")
+    safe_instruction = html.escape(body.instruction or "Hướng dẫn bổ sung").replace("\n", "<br/>")
+
+    html_content = htmlTemplate \
+        .replace("{{name}}", safe_name) \
+        .replace("{{reason}}", safe_reason) \
+        .replace("{{instruction}}", safe_instruction)
 
     try:
         result = resend.Emails.send({
             "from": RESEND_EMAIL_FROM,
             "to": body.to_address,
             "subject": "Thông báo: Yêu cầu định danh tài khoản của bạn chưa được chấp nhận",
-            "html": html
+            "html": html_content
         })
         return {"status": "ok", "id": result["id"]}
     except Exception as e:

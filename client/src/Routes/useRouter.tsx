@@ -5,7 +5,6 @@ import PersonalIdentification from "../pages/PersonalIdentification/PersonalIden
 import { useAppStore } from "../store/store";
 import Login from "../pages/Login/Login";
 import MainLayout from "../layouts/MainLayout";
-import Storage from "../pages/Storage/Storage";
 import DataList from "../pages/DataList/DataList";
 
 const ProjectRouter = () => {
@@ -49,14 +48,6 @@ export default function useRouter() {
               element: (
                 <Suspense>
                   <PersonalIdentification />
-                </Suspense>
-              ),
-            },
-            {
-              path: "/storage",
-              element: (
-                <Suspense>
-                  <Storage />
                 </Suspense>
               ),
             },
