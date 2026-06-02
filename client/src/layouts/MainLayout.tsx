@@ -1,31 +1,36 @@
 import { Layout } from "antd";
 import { useState } from "react";
 import { ContainerOutlined, MenuFoldOutlined, MenuUnfoldOutlined, PieChartOutlined } from "@ant-design/icons";
-import type { MenuProps } from "antd";
 import { Button, Menu } from "antd";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import Header from "../components/Header";
 
-type MenuItem = Required<MenuProps>["items"][number];
+interface MenuItem {
+  key: string;
+  icon: React.ReactNode;
+  path: string;
+  name: string;
+}
 
-const items: MenuItem[] = [
+// eslint-disable-next-line react-refresh/only-export-components
+export const items: MenuItem[] = [
   {
     key: "1",
     icon: <PieChartOutlined />,
-    label: (
-      <Link to="/" className="font-semibold">
-        Identification
-      </Link>
-    ),
+    path: "/",
+    name: "Dashboard",
   },
   {
     key: "2",
+    icon: <PieChartOutlined />,
+    path: "/personal-identification",
+    name: "Identification",
+  },
+  {
+    key: "3",
     icon: <ContainerOutlined />,
-    label: (
-      <Link className="font-semibold" to="/data">
-        Data
-      </Link>
-    ),
+    path: "/data",
+    name: "Data",
   },
 ];
 
@@ -54,7 +59,8 @@ export default function MainLayout() {
   };
 
   const selectedKey = (() => {
-    if (pathname.startsWith("/data")) return "2";
+    if (pathname.startsWith("/data")) return "3";
+    if (pathname.startsWith("/personal-identification")) return "2";
     return "1";
   })();
 
@@ -76,7 +82,17 @@ export default function MainLayout() {
           mode="inline"
           theme="dark"
           inlineCollapsed={collapsed}
-          items={items}
+          items={items.map((item) => {
+            return {
+              key: item.key,
+              icon: item.icon,
+              label: (
+                <Link to={item.path} className="font-semibold">
+                  {item.name}
+                </Link>
+              ),
+            };
+          })}
         />
       </Sider>
       <Layout style={{ marginLeft: collapsed ? siderCollapsedWidth : siderWidth, minHeight: "100vh" }}>

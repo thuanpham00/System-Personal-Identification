@@ -227,6 +227,7 @@ export default function PersonalIdentification() {
         username: data?.username || "...",
         created_at: new Date().toISOString(),
         status: data?.status || "...",
+        status_identification: "pending",
         email_login: data?.email_login || "...",
       })
       .select(); // 👈 thêm cái này;
@@ -242,11 +243,7 @@ export default function PersonalIdentification() {
   };
 
   return (
-    <Card
-      title="Personal Identification"
-      bordered={false}
-      className="w-full h-[calc(100vh-120px)] overflow-auto"
-    >
+    <Card bordered={false} className="w-full">
       <Row gutter={16}>
         <Col span={24}>
           <Alert

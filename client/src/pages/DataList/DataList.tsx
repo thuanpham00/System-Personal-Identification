@@ -13,6 +13,7 @@ import {
   Form,
   Input,
   DatePicker,
+  Select,
 } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { supabase } from "../../utils/supabase";
@@ -48,6 +49,8 @@ export default function DataList() {
     name?: string;
     startDate?: string;
     endDate?: string;
+    status?: string;
+    status_identification?: string;
   }>();
 
   const fetchData = async () => {
@@ -61,6 +64,12 @@ export default function DataList() {
     }
     if (query?.endDate) {
       q = q.lte("created_at", query.endDate);
+    }
+    if (query?.status) {
+      q = q.eq("status", query.status);
+    }
+    if (query?.status_identification) {
+      q = q.eq("status_identification", query.status_identification);
     }
 
     const { data, error } = await q;
@@ -337,12 +346,14 @@ export default function DataList() {
       name: values.name?.trim(),
       startDate: values.startDate?.toISOString(),
       endDate: values.endDate?.endOf("day").toISOString(),
+      status: values.status,
+      status_identification: values.status_identification,
     });
   };
 
   return (
     <div className="overflow-auto">
-      <div className="mx-auto flex max-w-7xl flex-col gap-6">
+      <div className="flex flex-col gap-6">
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
           <div className="mb-4 flex items-center justify-between">
             <div>
@@ -359,14 +370,36 @@ export default function DataList() {
               setQuery({});
             }}
           >
-            <Form.Item name="name" label="Họ tên" className="mb-0!">
+            <Form.Item name="name" label={<span className="font-semibold">Họ tên</span>} className="mb-0!">
               <Input placeholder="Nhập họ tên" allowClear className="mb-0!" />
             </Form.Item>
-            <Form.Item name="startDate" label="Ngày bắt đầu" className="mb-0!">
+            <Form.Item
+              name="startDate"
+              label={<span className="font-semibold">Ngày bắt đầu</span>}
+              className="mb-0!"
+            >
               <DatePicker placeholder="Chọn ngày" className="w-full" format="DD/MM/YYYY" />
             </Form.Item>
-            <Form.Item name="endDate" label="Ngày kết thúc" className="mb-0!">
+            <Form.Item name="endDate" label={<span className="font-semibold">Ngày kết thúc</span>} className="mb-0!">
               <DatePicker placeholder="Chọn ngày" className="w-full" format="DD/MM/YYYY" />
+            </Form.Item>
+
+            <Form.Item name="status" label={<span className="font-semibold">Trạng thái</span>} className="mb-0!">
+              <Select placeholder="Chọn trạng thái" className="w-full" allowClear>
+                <Select.Option value="OK">OK</Select.Option>
+                <Select.Option value="FAILED">FAILED</Select.Option>
+              </Select>
+            </Form.Item>
+
+            <Form.Item
+              name="status_identification"
+              label={<span className="font-semibold">Trạng thái định danh</span>}
+              className="mb-0!"
+            >
+              <Select placeholder="Chọn trạng thái" className="w-full" allowClear>
+                <Select.Option value="completed">Hoàn thành</Select.Option>
+                <Select.Option value="pending">Chưa hoàn thành</Select.Option>
+              </Select>
             </Form.Item>
 
             <Button type="primary" htmlType="submit" className="inline-block w-20 mb-0!">
