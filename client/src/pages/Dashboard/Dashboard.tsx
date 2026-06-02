@@ -126,16 +126,28 @@ export default function Dashboard() {
     <div className="flex flex-col gap-6">
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <Card className="rounded-2xl shadow-sm" bordered={false}>
-          <Statistic title="Tổng hồ sơ" value={totals.total} />
+          <Statistic
+            title={<span className="font-semibold text-red-500">Tổng hồ sơ</span>}
+            value={totals.total}
+          />
         </Card>
         <Card className="rounded-2xl shadow-sm" bordered={false}>
-          <Statistic title="Hồ sơ OK" value={totals.okCount} />
+          <Statistic
+            title={<span className="font-semibold text-blue-500">Hồ sơ OK</span>}
+            value={totals.okCount}
+          />
         </Card>
         <Card className="rounded-2xl shadow-sm" bordered={false}>
-          <Statistic title="Hồ sơ FAILED" value={totals.failedCount} />
+          <Statistic
+            title={<span className="font-semibold text-red-500">Hồ sơ FAILED</span>}
+            value={totals.failedCount}
+          />
         </Card>
         <Card className="rounded-2xl shadow-sm" bordered={false}>
-          <Statistic title="Đã hoàn thành" value={totals.completedCount} />
+          <Statistic
+            title={<span className="font-semibold text-green-500">Đã hoàn thành</span>}
+            value={totals.completedCount}
+          />
         </Card>
       </div>
 
