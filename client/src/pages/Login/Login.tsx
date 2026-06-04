@@ -16,7 +16,7 @@ export default function Login() {
 
   const handleFinish = (values: LoginFormValues) => {
     console.log("login submit", values);
-    if (values.username === "admin" && values.password === "hich3007") {
+    if (values.username === "admin" && values.password === "meCreator2026") {
       message.success("Login successful!");
       setNameUserToLS(values.username);
       setNameUser(values.username);
