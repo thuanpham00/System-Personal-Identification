@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Card, Col, Row, Spin, Statistic } from "antd";
+import { Card, Col, DatePicker, Row, Spin, Statistic } from "antd";
 import ReactECharts from "echarts-for-react";
 import type { EChartsOption } from "echarts";
 import { supabase } from "../../utils/supabase";
@@ -9,6 +9,7 @@ import {
   CloseCircleOutlined,
   FileTextOutlined,
 } from "@ant-design/icons";
+import dayjs from "dayjs";
 
 interface DashboardRecord {
   id: string;
@@ -29,16 +30,31 @@ const formatDateKey = (value: string) => {
   return date.toISOString().slice(0, 10);
 };
 
+const { RangePicker } = DatePicker;
+
+const nowDay = dayjs().format("YYYY-MM-DD");
+const defaultRange: [string, string] = [dayjs(nowDay).subtract(6, "day").format("YYYY-MM-DD"), nowDay];
+
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [records, setRecords] = useState<DashboardRecord[]>([]);
+  const [dateRange, setDateRange] = useState<[string, string]>(defaultRange);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from("data")
-        .select("id,status,status_identification,created_at,reminder_5m,reminder_3day,reminder_7day")
-        .order("created_at", { ascending: false });
+        .select("id,status,status_identification,created_at,reminder_5m,reminder_3day,reminder_7day");
+
+      if (dateRange) {
+        const [startDate, endDate] = dateRange;
+
+        query = query.gte("created_at", startDate).lte("created_at", endDate);
+      }
+
+      const { data, error } = await query.order("created_at", {
+        ascending: false,
+      });
 
       if (error) {
         console.error(error);
@@ -51,7 +67,7 @@ export default function Dashboard() {
     };
 
     fetchDashboardData();
-  }, []);
+  }, [dateRange]);
 
   const totals = useMemo(() => {
     const total = records.length;
@@ -249,6 +265,18 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
+      <Row justify="end" style={{ marginBottom: 16 }}>
+        <RangePicker
+          allowClear
+          defaultValue={[dayjs(dateRange[0]), dayjs(dateRange[1])]}
+          onChange={(dates) => {
+            if (!dates) return;
+
+            setDateRange([dates[0]!.format("YYYY-MM-DD"), dates[1]!.format("YYYY-MM-DD")]);
+          }}
+        />
+      </Row>
+
       <Row gutter={[16, 16]}>
         <Col span={6}>
           <Card className="shadow">

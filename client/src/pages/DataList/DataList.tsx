@@ -17,7 +17,7 @@ import {
 } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { supabase } from "../../utils/supabase";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { BookOutlined, DeleteOutlined, EditOutlined, ReloadOutlined } from "@ant-design/icons";
 import { DataModal, type DataModalRef } from "../../components/DataModal";
 import * as ExcelJS from "exceljs";
 
@@ -380,11 +380,19 @@ export default function DataList() {
             >
               <DatePicker placeholder="Chọn ngày" className="w-full" format="DD/MM/YYYY" />
             </Form.Item>
-            <Form.Item name="endDate" label={<span className="font-semibold">Ngày kết thúc</span>} className="mb-0!">
+            <Form.Item
+              name="endDate"
+              label={<span className="font-semibold">Ngày kết thúc</span>}
+              className="mb-0!"
+            >
               <DatePicker placeholder="Chọn ngày" className="w-full" format="DD/MM/YYYY" />
             </Form.Item>
 
-            <Form.Item name="status" label={<span className="font-semibold">Trạng thái</span>} className="mb-0!">
+            <Form.Item
+              name="status"
+              label={<span className="font-semibold">Trạng thái</span>}
+              className="mb-0!"
+            >
               <Select placeholder="Chọn trạng thái" className="w-full" allowClear>
                 <Select.Option value="OK">OK</Select.Option>
                 <Select.Option value="FAILED">FAILED</Select.Option>
@@ -413,9 +421,19 @@ export default function DataList() {
 
         <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
           <div className="flex justify-end gap-2 mb-4">
-            <Button className="" type="primary" onClick={handleExportExcel}>
+            <Button
+              className="bg-green-500!"
+              type="primary"
+              onClick={handleExportExcel}
+              icon={<BookOutlined />}
+            >
               Xuất excel
             </Button>
+
+            <Button className="" type="primary" onClick={fetchData} icon={<ReloadOutlined />}>
+              Làm mới
+            </Button>
+
             <Popconfirm
               title="Xác nhận xóa"
               description="Bạn có chắc muốn xóa các dữ liệu đã chọn không?"
