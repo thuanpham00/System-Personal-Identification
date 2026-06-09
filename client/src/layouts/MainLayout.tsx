@@ -32,6 +32,12 @@ export const items: MenuItem[] = [
     path: "/data",
     name: "Data",
   },
+  {
+    key: "4",
+    icon: <ContainerOutlined />,
+    path: "/demo",
+    name: "Demo",
+  },
 ];
 
 const { Sider, Content } = Layout;
@@ -61,6 +67,7 @@ export default function MainLayout() {
   const selectedKey = (() => {
     if (pathname.startsWith("/data")) return "3";
     if (pathname.startsWith("/personal-identification")) return "2";
+    if (pathname.startsWith("/demo")) return "4";
     return "1";
   })();
 

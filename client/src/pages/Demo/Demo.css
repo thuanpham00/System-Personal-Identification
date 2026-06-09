@@ -1,0 +1,29 @@
+.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #7c3aed !important;
+  font-weight: 600;
+}
+
+.ant-tabs-ink-bar {
+  background: #7c3aed !important;
+}
+
+.ant-table-thead > tr > th {
+  background: white !important;
+  color: #8b8b8b !important;
+  font-weight: 600;
+}
+
+.ant-table-tbody > tr > td {
+  padding-top: 20px !important;
+  padding-bottom: 20px !important;
+}
+
+.ant-table {
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.ant-input,
+.ant-select-selector {
+  border-radius: 12px !important;
+}

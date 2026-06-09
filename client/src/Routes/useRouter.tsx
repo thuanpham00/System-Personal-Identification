@@ -7,6 +7,7 @@ import Login from "../pages/Login/Login";
 import MainLayout from "../layouts/MainLayout";
 import DataList from "../pages/DataList/DataList";
 import Dashboard from "../pages/Dashboard/Dashboard";
+import AccountList from "../pages/Demo/Demo";
 
 const ProjectRouter = () => {
   const isLogin = useAppStore((state) => state.isLogin);
@@ -65,6 +66,14 @@ export default function useRouter() {
               element: (
                 <Suspense>
                   <DataList />
+                </Suspense>
+              ),
+            },
+            {
+              path: "/demo",
+              element: (
+                <Suspense>
+                  <AccountList />
                 </Suspense>
               ),
             },
